@@ -1,1 +1,6 @@
 .env
+image.png
+data/raw/
+chroma_db/
+__pycache__/
+*.pyc
