@@ -1,5 +1,6 @@
 .env
 image.png
+image_2.png
 data/raw/
 chroma_db/
 __pycache__/
