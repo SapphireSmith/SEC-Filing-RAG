@@ -3,5 +3,6 @@ image.png
 image_2.png
 data/raw/
 chroma_db/
+chroma_db_large/
 __pycache__/
 *.pyc
