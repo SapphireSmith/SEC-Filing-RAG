@@ -85,12 +85,13 @@ Answer:"""
     return prompt
 
 
-def get_answer(query: str, company_filter: str = None) -> dict:
+def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict:
     """
     Main function — takes a question, returns answer + source chunks
     """
     # Step 1: Load vector store
-    vectorstore = load_vectorstore()
+    if vectorstore is None:
+        vectorstore = load_vectorstore()
 
     # Step 2: Find relevant chunks
     chunks = retrieve_chunks(vectorstore, query, company_filter)
@@ -132,7 +133,8 @@ if __name__ == "__main__":
 
     # Test question
     # result = get_answer("What export control risks does NVIDIA face?")
-    result = get_answer("Which companies mention AI as a growth opportunity?")
+    # result = get_answer("Which companies mention AI as a growth opportunity?")
+    result = get_answer("How does Amazon describe its AWS business?", company_filter="amazon")
 
     print(f"Question: {result['question']}")
     print(f"\nAnswer:\n{result['answer']}")
