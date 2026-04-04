@@ -131,7 +131,8 @@ if __name__ == "__main__":
     print("=== Testing Retriever ===\n")
 
     # Test question
-    result = get_answer("What export control risks does NVIDIA face?")
+    # result = get_answer("What export control risks does NVIDIA face?")
+    result = get_answer("Which companies mention AI as a growth opportunity?")
 
     print(f"Question: {result['question']}")
     print(f"\nAnswer:\n{result['answer']}")
