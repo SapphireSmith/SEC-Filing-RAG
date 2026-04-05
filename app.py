@@ -2,7 +2,34 @@ import gradio as gr
 import pandas as pd
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+CHROMA_DIR = "chroma_db"
+
+def run_startup_ingestion():
+    """
+    Only runs on HuggingFace when chroma_db doesn't exist.
+    Fetches SEC filings and builds the vector store from scratch.
+    """
+    print("=== No ChromaDB found. Running startup ingestion... ===")
+    
+    print("Step 1: Fetching SEC filings...")
+    from rag.fetcher import fetch_all
+    fetch_all()
+    print("Fetching complete.")
+    
+    print("Step 2: Building vector store...")
+    from rag.ingestor import ingest
+    ingest()
+    print("Ingestion complete.")
+
+
+# Check if ChromaDB exists — if not, build it
+if not os.path.exists(CHROMA_DIR):
+    run_startup_ingestion()
+else:
+    print("ChromaDB found. Skipping ingestion.")
 
 from rag.retriever import get_answer, load_vectorstore
 from rag.evaluator import run_evaluation
@@ -30,7 +57,6 @@ body, .gradio-container {
     padding: 2rem !important;
 }
 
-/* Header */
 .app-header {
     text-align: center;
     padding: 2.5rem 0 2rem 0;
@@ -56,7 +82,6 @@ body, .gradio-container {
     text-transform: uppercase;
 }
 
-/* Tabs */
 .tab-nav {
     background: transparent !important;
     border-bottom: 1px solid #1e1e2e !important;
@@ -78,7 +103,6 @@ body, .gradio-container {
     border-bottom: 2px solid #f5c842 !important;
 }
 
-/* Inputs */
 textarea, input[type="text"] {
     background: #0f0f1a !important;
     border: 1px solid #1e1e2e !important;
@@ -96,7 +120,6 @@ textarea:focus, input[type="text"]:focus {
     box-shadow: 0 0 0 2px rgba(245, 200, 66, 0.1) !important;
 }
 
-/* Dropdown */
 select {
     background: #0f0f1a !important;
     border: 1px solid #1e1e2e !important;
@@ -107,7 +130,6 @@ select {
     padding: 0.6rem !important;
 }
 
-/* Buttons */
 button.primary {
     background: #f5c842 !important;
     color: #0a0a0f !important;
@@ -146,7 +168,6 @@ button.secondary:hover {
     background: rgba(245, 200, 66, 0.1) !important;
 }
 
-/* Output boxes */
 .output-box {
     background: #0f0f1a !important;
     border: 1px solid #1e1e2e !important;
@@ -156,7 +177,6 @@ button.secondary:hover {
     padding: 1rem !important;
 }
 
-/* Labels */
 label, .label-wrap {
     font-family: 'Space Mono', monospace !important;
     font-size: 0.7rem !important;
@@ -166,48 +186,9 @@ label, .label-wrap {
     margin-bottom: 0.4rem !important;
 }
 
-/* Score cards */
-.score-card {
-    background: #0f0f1a;
-    border: 1px solid #1e1e2e;
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.5rem;
-}
-
-.score-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    color: #4a4a6a;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.score-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #f5c842;
-}
-
-/* Dataframe */
 .dataframe {
     font-family: 'Space Mono', monospace !important;
     font-size: 0.75rem !important;
-}
-
-/* Source tags */
-.source-tag {
-    display: inline-block;
-    background: rgba(245, 200, 66, 0.1);
-    border: 1px solid rgba(245, 200, 66, 0.3);
-    color: #f5c842;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    padding: 2px 8px;
-    border-radius: 3px;
-    margin: 2px;
-    letter-spacing: 1px;
 }
 """
 
@@ -234,9 +215,7 @@ def format_sources(sources: list) -> str:
 def ask_question(question: str, company: str) -> tuple:
     if not question.strip():
         return "Please enter a question.", ""
-
     company_filter = None if company == "All Companies" else company
-
     try:
         result = get_answer(question, company_filter, vectorstore)
         answer = result["answer"]
@@ -259,14 +238,11 @@ def run_eval() -> tuple:
                 "Precision": f"{r['context_precision']}/5",
                 "Overall": f"{r['overall']}/5",
             })
-
         df = pd.DataFrame(rows)
-
         avg_overall = sum(r["overall"] for r in results) / len(results)
         avg_faith = sum(r["faithfulness"] for r in results) / len(results)
         avg_rel = sum(r["answer_relevance"] for r in results) / len(results)
         avg_prec = sum(r["context_precision"] for r in results) / len(results)
-
         summary = f"""### Evaluation Summary
 
 | Metric | Average Score |
@@ -277,22 +253,14 @@ def run_eval() -> tuple:
 | **Overall** | **{avg_overall:.2f} / 5** |
 """
         return df, summary
-
     except Exception as e:
         return pd.DataFrame(), f"Error: {str(e)}"
-
-
-# Update get_answer to accept vectorstore
-def ask_wrapper(question, company):
-    return ask_question(question, company)
 
 
 with gr.Blocks(css=CSS, theme=gr.themes.Base()) as app:
     gr.HTML(HEADER_HTML)
 
     with gr.Tabs():
-
-        # TAB 1 — ASK
         with gr.Tab("Ask"):
             with gr.Row():
                 with gr.Column(scale=3):
@@ -307,36 +275,26 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as app:
                         value="All Companies",
                         label="Company Filter"
                     )
-
             submit_btn = gr.Button("Analyze →", variant="primary")
-
             with gr.Row():
                 with gr.Column():
                     answer_output = gr.Markdown(label="Answer")
                 with gr.Column():
                     sources_output = gr.Markdown(label="Sources")
-
             submit_btn.click(
-                fn=ask_wrapper,
+                fn=ask_question,
                 inputs=[question_input, company_input],
                 outputs=[answer_output, sources_output]
             )
 
-        # TAB 2 — EVAL DASHBOARD
         with gr.Tab("Eval Dashboard"):
             gr.Markdown("""
 ### Automated Evaluation Pipeline
 Runs all test questions through the RAG system and scores each answer using an LLM-as-judge on three metrics: **Faithfulness**, **Answer Relevance**, and **Context Precision**.
             """)
-
             eval_btn = gr.Button("Run Evaluation", variant="secondary")
-
-            eval_table = gr.Dataframe(
-                label="Results",
-                wrap=True
-            )
+            eval_table = gr.Dataframe(label="Results", wrap=True)
             eval_summary = gr.Markdown(label="Summary")
-
             eval_btn.click(
                 fn=run_eval,
                 inputs=[],

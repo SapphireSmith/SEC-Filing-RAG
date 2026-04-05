@@ -4,5 +4,6 @@ image_2.png
 data/raw/
 chroma_db/
 chroma_db_large/
+chroma_db_small/
 __pycache__/
 *.pyc
