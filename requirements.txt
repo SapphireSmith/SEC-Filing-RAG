@@ -3,7 +3,7 @@ langchain-community
 chromadb
 sentence-transformers
 groq
-gradio
+gradio==5.23.0
 requests
 python-dotenv
 beautifulsoup4
