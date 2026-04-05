@@ -2,7 +2,7 @@
 title: SEC Filing RAG
 emoji: 📈
 colorFrom: yellow
-colorTo: black
+colorTo: gray
 sdk: gradio
 sdk_version: 4.0.0
 app_file: app.py
@@ -10,19 +10,4 @@ pinned: false
 ---
 
 # SEC Filing RAG
-
 AI-powered analysis of SEC 10-K filings using RAG with automated LLM-as-judge evaluation.
-
-## Companies Covered
-- NVIDIA, Apple, Microsoft, Tesla, Amazon
-
-## Stack
-- Embeddings: sentence-transformers (all-MiniLM-L6-v2)
-- Vector DB: ChromaDB
-- LLM: Groq (llama-3.1-8b-instant)
-- UI: Gradio
-
-## Features
-- Ask questions about any company 10-K filing
-- Filter by company
-- Automated eval pipeline scoring faithfulness, relevance, and context precision
