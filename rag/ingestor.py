@@ -21,10 +21,7 @@ def load_documents() -> list[dict]:
             filepath = os.path.join(RAW_DATA_DIR, filename)
             with open(filepath, "r", encoding="utf-8") as f:
                 text = f.read()
-            documents.append({
-                "text": text,
-                "company": company_name
-            })
+            documents.append({"text": text, "company": company_name})
             print(f"  Loaded {company_name} ({len(text):,} characters)")
     return documents
 
@@ -42,11 +39,13 @@ def chunk_documents(documents: list[dict]) -> tuple[list, list]:
         chunks = splitter.split_text(doc["text"])
         for i, chunk in enumerate(chunks):
             all_chunks.append(chunk)
-            all_metadatas.append({
-                "company": doc["company"],
-                "chunk_index": i,
-                "source": f"{doc['company']}_10k"
-            })
+            all_metadatas.append(
+                {
+                    "company": doc["company"],
+                    "chunk_index": i,
+                    "source": f"{doc['company']}_10k",
+                }
+            )
         print(f"  {doc['company']}: {len(chunks)} chunks")
 
     return all_chunks, all_metadatas
@@ -66,8 +65,7 @@ def ingest() -> None:
     print("\nStep 3: Loading embedding model...")
     print("(First time will download the model — wait for it)")
     embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"}
+        model_name=EMBEDDING_MODEL, model_kwargs={"device": "cpu"}
     )
     print("Embedding model ready")
 
@@ -77,11 +75,11 @@ def ingest() -> None:
         embedding=embeddings,
         metadatas=metadatas,
         persist_directory=CHROMA_DIR,
-        collection_name="sec_filings"
+        collection_name="sec_filings",
     )
 
-    print(f"\n=== Ingestion Complete ===")
-    print(f"Collection: sec_filings")
+    print(f"\n=== Ingestion Complete ===")  # noqa: F541
+    print(f"Collection: sec_filings")  # noqa: F541
     print(f"Total chunks stored: {len(chunks)}")
     print(f"ChromaDB saved to: {CHROMA_DIR}/")
 

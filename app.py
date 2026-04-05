@@ -7,20 +7,23 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 CHROMA_DIR = "chroma_db"
 
+
 def run_startup_ingestion():
     """
     Only runs on HuggingFace when chroma_db doesn't exist.
     Fetches SEC filings and builds the vector store from scratch.
     """
     print("=== No ChromaDB found. Running startup ingestion... ===")
-    
+
     print("Step 1: Fetching SEC filings...")
     from rag.fetcher import fetch_all
+
     fetch_all()
     print("Fetching complete.")
-    
+
     print("Step 2: Building vector store...")
     from rag.ingestor import ingest
+
     ingest()
     print("Ingestion complete.")
 
@@ -31,8 +34,8 @@ if not os.path.exists(CHROMA_DIR):
 else:
     print("ChromaDB found. Skipping ingestion.")
 
-from rag.retriever import get_answer, load_vectorstore
-from rag.evaluator import run_evaluation
+from rag.retriever import get_answer, load_vectorstore  # noqa: E402
+from rag.evaluator import run_evaluation  # noqa: E402
 
 # Load vectorstore once at startup
 print("Loading vector store...")
@@ -230,14 +233,16 @@ def run_eval() -> tuple:
         results = run_evaluation()
         rows = []
         for r in results:
-            rows.append({
-                "Question": r["question"][:60] + "...",
-                "Company": r["company_filter"] or "All",
-                "Faithfulness": f"{r['faithfulness']}/5",
-                "Relevance": f"{r['answer_relevance']}/5",
-                "Precision": f"{r['context_precision']}/5",
-                "Overall": f"{r['overall']}/5",
-            })
+            rows.append(
+                {
+                    "Question": r["question"][:60] + "...",
+                    "Company": r["company_filter"] or "All",
+                    "Faithfulness": f"{r['faithfulness']}/5",
+                    "Relevance": f"{r['answer_relevance']}/5",
+                    "Precision": f"{r['context_precision']}/5",
+                    "Overall": f"{r['overall']}/5",
+                }
+            )
         df = pd.DataFrame(rows)
         avg_overall = sum(r["overall"] for r in results) / len(results)
         avg_faith = sum(r["faithfulness"] for r in results) / len(results)
@@ -267,13 +272,11 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as app:
                     question_input = gr.Textbox(
                         label="Question",
                         placeholder="e.g. What export control risks does NVIDIA face?",
-                        lines=3
+                        lines=3,
                     )
                 with gr.Column(scale=1):
                     company_input = gr.Dropdown(
-                        choices=COMPANIES,
-                        value="All Companies",
-                        label="Company Filter"
+                        choices=COMPANIES, value="All Companies", label="Company Filter"
                     )
             submit_btn = gr.Button("Analyze →", variant="primary")
             with gr.Row():
@@ -284,7 +287,7 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as app:
             submit_btn.click(
                 fn=ask_question,
                 inputs=[question_input, company_input],
-                outputs=[answer_output, sources_output]
+                outputs=[answer_output, sources_output],
             )
 
         with gr.Tab("Eval Dashboard"):
@@ -295,10 +298,6 @@ Runs all test questions through the RAG system and scores each answer using an L
             eval_btn = gr.Button("Run Evaluation", variant="secondary")
             eval_table = gr.Dataframe(label="Results", wrap=True)
             eval_summary = gr.Markdown(label="Summary")
-            eval_btn.click(
-                fn=run_eval,
-                inputs=[],
-                outputs=[eval_table, eval_summary]
-            )
+            eval_btn.click(fn=run_eval, inputs=[], outputs=[eval_table, eval_summary])
 
 app.launch()

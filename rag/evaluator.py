@@ -4,6 +4,7 @@ import json
 import time
 from groq import Groq
 from dotenv import load_dotenv
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from rag.retriever import get_answer
 
@@ -15,31 +16,28 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TEST_QUESTIONS = [
     {
         "question": "What export control risks does NVIDIA face?",
-        "company_filter": "nvidia"
+        "company_filter": "nvidia",
     },
-    {
-        "question": "What were Apple's main revenue sources?",
-        "company_filter": "apple"
-    },
+    {"question": "What were Apple's main revenue sources?", "company_filter": "apple"},
     {
         "question": "What are Microsoft's key AI investments?",
-        "company_filter": "microsoft"
+        "company_filter": "microsoft",
     },
     {
         "question": "What risks does Tesla mention regarding autonomous driving?",
-        "company_filter": "tesla"
+        "company_filter": "tesla",
     },
     {
         "question": "How does Amazon describe its AWS business?",
-        "company_filter": "amazon"
+        "company_filter": "amazon",
     },
     {
         "question": "Which companies mention AI as a growth opportunity?",
-        "company_filter": None
+        "company_filter": None,
     },
     {
         "question": "What do these companies say about competition?",
-        "company_filter": None
+        "company_filter": None,
     },
 ]
 
@@ -48,9 +46,7 @@ def build_judge_prompt(question: str, answer: str, chunks: list) -> str:
     """
     Build the prompt for the judge LLM.
     """
-    context = "\n\n---\n\n".join([
-        chunk["text_preview"] for chunk in chunks
-    ])
+    context = "\n\n---\n\n".join([chunk["text_preview"] for chunk in chunks])
 
     prompt = f"""You are an expert evaluator of RAG (Retrieval Augmented Generation) systems.
 
@@ -104,16 +100,17 @@ def evaluate_single(question: str, answer: str, sources: list) -> dict:
     """
     Send one answer to the judge LLM and get scores back.
     """
+    time.sleep(8)
+
     client = Groq(api_key=GROQ_API_KEY)
 
     judge_prompt = build_judge_prompt(question, answer, sources)
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[
-            {"role": "user", "content": judge_prompt}
-        ],
-        temperature=0.0  # zero temperature for consistent scoring
+        # model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": judge_prompt}],
+        temperature=0.0,  # zero temperature for consistent scoring
     )
 
     raw = response.choices[0].message.content.strip()
@@ -143,17 +140,22 @@ def run_evaluation() -> list:
         question = item["question"]
         company_filter = item["company_filter"]
 
-        print(f"[{i+1}/{len(TEST_QUESTIONS)}] {question}")
+        print(f"[{i + 1}/{len(TEST_QUESTIONS)}] {question}")
 
-        # Step 1: Get RAG answer
-        rag_result = get_answer(question, company_filter)
+        try:
+            # Step 1: Get RAG answer
+            rag_result = get_answer(question, company_filter)
 
-        # Step 2: Judge the answer
-        scores = evaluate_single(
-            question=rag_result["question"],
-            answer=rag_result["answer"],
-            sources=rag_result["sources"]
-        )
+            # Step 2: Judge the answer
+            scores = evaluate_single(
+                question=rag_result["question"],
+                answer=rag_result["answer"],
+                sources=rag_result["sources"],
+            )
+        except Exception as e:
+            print(f"  ERROR: {str(e)} — skipping this question")
+            time.sleep(2)
+            continue
 
         # Step 3: Store result
         result = {
@@ -166,10 +168,14 @@ def run_evaluation() -> list:
             "context_precision": scores.get("context_precision", 0),
             "reasoning": scores.get("reasoning", ""),
             "overall": round(
-                (scores.get("faithfulness", 0) +
-                 scores.get("answer_relevance", 0) +
-                 scores.get("context_precision", 0)) / 3, 2
-            )
+                (
+                    scores.get("faithfulness", 0)
+                    + scores.get("answer_relevance", 0)
+                    + scores.get("context_precision", 0)
+                )
+                / 3,
+                2,
+            ),
         }
 
         results.append(result)
@@ -182,12 +188,14 @@ def run_evaluation() -> list:
         print()
 
         # Wait between calls to avoid rate limiting
-        time.sleep(1)
+        time.sleep(10)
 
     # Print summary
     avg_faithfulness = round(sum(r["faithfulness"] for r in results) / len(results), 2)
     avg_relevance = round(sum(r["answer_relevance"] for r in results) / len(results), 2)
-    avg_precision = round(sum(r["context_precision"] for r in results) / len(results), 2)
+    avg_precision = round(
+        sum(r["context_precision"] for r in results) / len(results), 2
+    )
     avg_overall = round(sum(r["overall"] for r in results) / len(results), 2)
 
     print("=== Summary ===")

@@ -17,7 +17,7 @@ USE_LARGE_MODEL = os.getenv("USE_LARGE_MODEL", "False") == "True"
 EMBEDDING_MODEL = "BAAI/bge-large-en-v1.5" if USE_LARGE_MODEL else "all-MiniLM-L6-v2"
 
 # How many chunks to retrieve per query
-TOP_K = 5
+TOP_K = 8
 
 
 def load_vectorstore() -> Chroma:
@@ -25,20 +25,21 @@ def load_vectorstore() -> Chroma:
     Load the existing ChromaDB vector store from disk
     """
     embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"}
+        model_name=EMBEDDING_MODEL, model_kwargs={"device": "cpu"}
     )
 
     vectorstore = Chroma(
         persist_directory=CHROMA_DIR,
         embedding_function=embeddings,
-        collection_name="sec_filings"
+        collection_name="sec_filings",
     )
 
     return vectorstore
 
 
-def retrieve_chunks(vectorstore: Chroma, query: str, company_filter: str = None) -> list:
+def retrieve_chunks(
+    vectorstore: Chroma, query: str, company_filter: str = None
+) -> list:
     """
     Search ChromaDB for the most relevant chunks.
     Optionally filter by company.
@@ -46,9 +47,7 @@ def retrieve_chunks(vectorstore: Chroma, query: str, company_filter: str = None)
     if company_filter:
         # Search only within a specific company
         results = vectorstore.similarity_search(
-            query,
-            k=TOP_K,
-            filter={"company": company_filter}
+            query, k=TOP_K, filter={"company": company_filter}
         )
     else:
         # Search across all companies
@@ -103,10 +102,8 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
     client = Groq(api_key=GROQ_API_KEY)
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.1  # low temperature = more factual, less creative
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.1,  # low temperature = more factual, less creative
     )
 
     answer = response.choices[0].message.content
@@ -116,16 +113,12 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
         {
             "company": chunk.metadata.get("company"),
             "chunk_index": chunk.metadata.get("chunk_index"),
-            "text_preview": chunk.page_content[:150] + "..."
+            "text_preview": chunk.page_content[:150] + "...",
         }
         for chunk in chunks
     ]
 
-    return {
-        "question": query,
-        "answer": answer,
-        "sources": sources
-    }
+    return {"question": query, "answer": answer, "sources": sources}
 
 
 if __name__ == "__main__":
@@ -134,12 +127,14 @@ if __name__ == "__main__":
     # Test question
     # result = get_answer("What export control risks does NVIDIA face?")
     # result = get_answer("Which companies mention AI as a growth opportunity?")
-    result = get_answer("How does Amazon describe its AWS business?", company_filter="amazon")
+    result = get_answer(
+        "How does Amazon describe its AWS business?", company_filter="amazon"
+    )
 
     print(f"Question: {result['question']}")
     print(f"\nAnswer:\n{result['answer']}")
-    print(f"\nSources used:")
-    for s in result['sources']:
+    print(f"\nSources used:")  # noqa: F541
+    for s in result["sources"]:
         print(f"  - {s['company']} | chunk {s['chunk_index']}")
         print(f"    Preview: {s['text_preview']}")
         print()
