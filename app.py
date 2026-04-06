@@ -2,6 +2,7 @@ import gradio as gr
 import pandas as pd
 import sys
 import os
+import json
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,7 +36,6 @@ else:
     print("ChromaDB found. Skipping ingestion.")
 
 from rag.retriever import get_answer, load_vectorstore  # noqa: E402
-from rag.evaluator import run_evaluation  # noqa: E402
 
 # Load vectorstore once at startup
 print("Loading vector store...")
@@ -230,7 +230,12 @@ def ask_question(question: str, company: str) -> tuple:
 
 def run_eval() -> tuple:
     try:
-        results = run_evaluation()
+        with open("eval_results.json", "r") as f:
+            data = json.load(f)
+
+        results = data["results"]
+        summary = data["summary"]
+
         rows = []
         for r in results:
             rows.append(
@@ -243,21 +248,24 @@ def run_eval() -> tuple:
                     "Overall": f"{r['overall']}/5",
                 }
             )
+
         df = pd.DataFrame(rows)
-        avg_overall = sum(r["overall"] for r in results) / len(results)
-        avg_faith = sum(r["faithfulness"] for r in results) / len(results)
-        avg_rel = sum(r["answer_relevance"] for r in results) / len(results)
-        avg_prec = sum(r["context_precision"] for r in results) / len(results)
-        summary = f"""### Evaluation Summary
+
+        summary_md = f"""### Evaluation Summary
 
 | Metric | Average Score |
 |--------|--------------|
-| Faithfulness | {avg_faith:.2f} / 5 |
-| Answer Relevance | {avg_rel:.2f} / 5 |
-| Context Precision | {avg_prec:.2f} / 5 |
-| **Overall** | **{avg_overall:.2f} / 5** |
+| Faithfulness | {summary["avg_faithfulness"]} / 5 |
+| Answer Relevance | {summary["avg_relevance"]} / 5 |
+| Context Precision | {summary["avg_precision"]} / 5 |
+| **Overall** | **{summary["avg_overall"]} / 5** |
+
+*Evaluated using LLM-as-judge (llama-3.3-70b-versatile) across 7 test questions.*
 """
-        return df, summary
+        return df, summary_md
+
+    except FileNotFoundError:
+        return pd.DataFrame(), "No evaluation results found. Run evaluator.py first."
     except Exception as e:
         return pd.DataFrame(), f"Error: {str(e)}"
 

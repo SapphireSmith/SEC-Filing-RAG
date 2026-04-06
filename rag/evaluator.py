@@ -204,6 +204,22 @@ def run_evaluation() -> list:
     print(f"Avg Context Precision: {avg_precision}/5")
     print(f"Avg Overall:           {avg_overall}/5")
 
+    with open("eval_results.json", "w") as f:
+        json.dump(
+            {
+                "results": results,
+                "summary": {
+                    "avg_faithfulness": avg_faithfulness,
+                    "avg_relevance": avg_relevance,
+                    "avg_precision": avg_precision,
+                    "avg_overall": avg_overall,
+                },
+            },
+            f,
+            indent=2,
+        )
+    print("\nResults saved to eval_results.json")
+
     return results
 
 
