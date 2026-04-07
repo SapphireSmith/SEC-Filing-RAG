@@ -2,15 +2,18 @@ import sys
 import os
 import json
 import time
-from groq import Groq
+from groq import Groq, APIStatusError, InternalServerError, RateLimitError
 from dotenv import load_dotenv
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from rag.retriever import get_answer
+from rag.retriever import get_answer, load_vectorstore
 
 load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+JUDGE_MODEL = os.getenv("GROQ_JUDGE_MODEL", "llama-3.1-8b-instant")
+MAX_RETRIES = int(os.getenv("GROQ_MAX_RETRIES", "5"))
+BASE_RETRY_DELAY = int(os.getenv("GROQ_BASE_RETRY_DELAY", "15"))
 
 # Test questions we'll evaluate our RAG against
 TEST_QUESTIONS = [
@@ -96,24 +99,58 @@ Respond ONLY with a JSON object in this exact format, nothing else:
     return prompt
 
 
+def _sleep_for_retry(attempt: int, error: Exception) -> None:
+    """
+    Sleep with exponential backoff when Groq asks us to slow down.
+    """
+    retry_after = None
+    response = getattr(error, "response", None)
+
+    if response is not None:
+        headers = getattr(response, "headers", None) or {}
+        retry_after = headers.get("retry-after") or headers.get("Retry-After")
+
+    try:
+        delay = int(float(retry_after)) if retry_after else BASE_RETRY_DELAY * attempt
+    except (TypeError, ValueError):
+        delay = BASE_RETRY_DELAY * attempt
+
+    print(
+        f"  Judge rate limit hit. Waiting {delay}s before retry {attempt}/{MAX_RETRIES}..."
+    )
+    time.sleep(delay)
+
+
+def _create_judge_completion(judge_prompt: str) -> str:
+    """
+    Wrap judge calls with retries for rate limits and transient API errors.
+    """
+    client = Groq(api_key=GROQ_API_KEY)
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = client.chat.completions.create(
+                model=JUDGE_MODEL,
+                messages=[{"role": "user", "content": judge_prompt}],
+                temperature=0.0,
+            )
+            return response.choices[0].message.content.strip()
+        except (RateLimitError, InternalServerError) as error:
+            if attempt == MAX_RETRIES:
+                raise
+            _sleep_for_retry(attempt, error)
+        except APIStatusError as error:
+            if error.status_code not in {429, 500, 502, 503, 504} or attempt == MAX_RETRIES:
+                raise
+            _sleep_for_retry(attempt, error)
+
+
 def evaluate_single(question: str, answer: str, sources: list) -> dict:
     """
     Send one answer to the judge LLM and get scores back.
     """
-    time.sleep(8)
-
-    client = Groq(api_key=GROQ_API_KEY)
-
     judge_prompt = build_judge_prompt(question, answer, sources)
-
-    response = client.chat.completions.create(
-        # model="llama-3.1-8b-instant",
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": judge_prompt}],
-        temperature=0.0,  # zero temperature for consistent scoring
-    )
-
-    raw = response.choices[0].message.content.strip()
+    raw = _create_judge_completion(judge_prompt)
 
     # Parse the JSON response
     try:
@@ -135,6 +172,7 @@ def run_evaluation() -> list:
     print(f"Total questions: {len(TEST_QUESTIONS)}\n")
 
     results = []
+    vectorstore = load_vectorstore()
 
     for i, item in enumerate(TEST_QUESTIONS):
         question = item["question"]
@@ -144,7 +182,7 @@ def run_evaluation() -> list:
 
         try:
             # Step 1: Get RAG answer
-            rag_result = get_answer(question, company_filter)
+            rag_result = get_answer(question, company_filter, vectorstore=vectorstore)
 
             # Step 2: Judge the answer
             scores = evaluate_single(
@@ -187,10 +225,11 @@ def run_evaluation() -> list:
         print(f"  Reasoning: {result['reasoning']}")
         print()
 
-        # Wait between calls to avoid rate limiting
-        time.sleep(10)
-
     # Print summary
+    if not results:
+        print("No evaluation results were produced.")
+        return results
+
     avg_faithfulness = round(sum(r["faithfulness"] for r in results) / len(results), 2)
     avg_relevance = round(sum(r["answer_relevance"] for r in results) / len(results), 2)
     avg_precision = round(

@@ -3,7 +3,7 @@
     {
       "question": "What export control risks does NVIDIA face?",
       "company_filter": "nvidia",
-      "answer": "NVIDIA faces export control risks including:\n\n- Disproportionate impact on NVIDIA compared to competitors selling chips outside the scope of export controls.\n- Encouraging customers to \"design-out\" U.S. semiconductors from their products to reduce compliance burden and risk.\n- Overseas governments requesting customers to purchase from competitors rather than NVIDIA or other U.S. firms.\n- Restrictions on the use, resale, repair, or transfer of NVIDIA's products, negatively impacting business and financial results.\n- Disruption of supply and distribution chain for a substantial portion of NVIDIA's products.\n- Imposition of export controls on NVIDIA's networking products, such as high-speed network interconnects.\n- Potential exposure to significant risk and liability due to government mandates in chip designs introducing system vulnerabilities.\n- Negative impact on demand for NVIDIA's products and services in various markets, including Europe, Latin America, and Southeast Asia.\n- Excess inventory and purchase obligations due to new unilateral export controls restricting sales of new products.\n- Increased investment in foreign competitors, which would be less likely to be restricted by U.S. controls.",
+      "answer": "NVIDIA, a U.S. firm, faces several export control risks, including:\n\n1. Disproportionate impact on NVIDIA compared to competitors selling chips outside the scope of export controls.\n2. Encouragement of customers to \"design-out\" U.S. semiconductors from their products to reduce compliance burden and risk.\n3. Overseas governments requesting customers to purchase from competitors rather than NVIDIA.\n4. Restrictions on the use, resale, repair, or transfer of NVIDIA's products, negatively impacting business and financial results.\n5. Disruption of supply chain and distribution channels, negatively impacting ability to serve demand.\n6. Negative impact on demand for NVIDIA's products due to the possibility of additional export controls.\n7. Compliance burdens on NVIDIA's business and customers due to repeated changes in export control rules.\n8. Limitation on NVIDIA's ability to export technology, products, or services, creating a competitive disadvantage.\n\nThese risks are likely to negatively and materially impact NVIDIA's business, revenue, and financial results.",
       "sources": [
         {
           "company": "nvidia",
@@ -17,45 +17,25 @@
         },
         {
           "company": "nvidia",
-          "chunk_index": 214,
-          "text_preview": "27\nTable of Contents\nnegatively impact sales of such products to markets outside China, including the U.S. and Europe. In addition, as the performance..."
+          "chunk_index": 196,
+          "text_preview": "Export controls have and could in the future disrupt our supply chain and distribution channels, negatively impacting our ability to serve demand, inc..."
         },
         {
           "company": "nvidia",
-          "chunk_index": 143,
-          "text_preview": "We hold confidential, sensitive, personal and proprietary information, including information from partners and customers. Breaches of our security mea..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 186,
-          "text_preview": "United Kingdom, China, and South Korea regarding our sales of GPUs and other NVIDIA products, our efforts to allocate supply, foundation models and ou..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 193,
-          "text_preview": "Such restrictions could include additional unilateral or multilateral export controls on certain products or technology, including but not limited to ..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 211,
-          "text_preview": "For example, the USG already imposed license conditions that limit the ability of foreign firms to create and offer as a service large-scale GPU clust..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 216,
-          "text_preview": "As a result, export controls have in the past and may in the future negatively impact demand for our products and services not only in China, but also..."
+          "chunk_index": 194,
+          "text_preview": "and warehousing locations and options, or could impose other conditions that limit our ability to serve demand abroad and could negatively and materia..."
         }
       ],
-      "faithfulness": 3,
+      "faithfulness": 4,
       "answer_relevance": 5,
-      "context_precision": 4,
-      "reasoning": "The answer is highly relevant to the question and most claims are supported by the source chunks, but some claims are slightly vague or not directly supported, and while most chunks are relevant, a few seem slightly off-topic or not directly related to export control risks.",
+      "context_precision": 3,
+      "reasoning": "The answer is mostly faithful to the source chunks, but some claims (e.g. 'design-out' U.S. semiconductors) are not explicitly mentioned in the chunks, and some chunks are partially relevant to the question.",
       "overall": 4.0
     },
     {
       "question": "What were Apple's main revenue sources?",
       "company_filter": "apple",
-      "answer": "Based on the provided context from Apple Inc.'s 2025 Form 10-K, the main revenue sources for Apple were:\n\n1. iPhone: $209,586 million in 2025, $201,183 million in 2024, and $200,583 million in 2023.\n2. Services: $109,158 million in 2025, $96,169 million in 2024, and $85,200 million in 2023.\n3. Mac: $33,708 million in 2025, $29,984 million in 2024, and $29,357 million in 2023.\n4. iPad: $28,023 million in 2025, $26,694 million in 2024, and $28,300 million in 2023.\n5. Wearables, Home and Accessories: $35,686 million in 2025, $37,005 million in 2024, and $39,845 million in 2023.\n\nThese revenue sources are based on the disaggregated net sales table provided in the context.",
+      "answer": "Based on the provided context from Apple Inc.'s 2025 Form 10-K, the main revenue sources were:\n\n1. iPhone: $209,586 million in 2025\n2. Services: $109,158 million in 2025 (includes amortization of the deferred value of services bundled in the sales price of certain products)\n3. Mac: $33,708 million in 2025\n4. iPad: $28,023 million in 2025\n5. Wearables, Home and Accessories: $35,686 million in 2025\n\nThese revenue sources are listed in the table on page 35 of the 2025 Form 10-K.",
       "sources": [
         {
           "company": "apple",
@@ -64,65 +44,35 @@
         },
         {
           "company": "apple",
-          "chunk_index": 243,
-          "text_preview": "(\n9,802\n)\n(\n4,341\n)\n(\n2,351\n)\n(\n854\n)\n(\n1,291\n)\n\u2014\n(\n18,639\n)\nGeneral and administrative\n\u2014\n\u2014\n\u2014\n\u2014\n\u2014\n(\n7,458\n)\n(\n7,458\n)\nOperating income/(loss)\n$\n67,656..."
-        },
-        {
-          "company": "apple",
-          "chunk_index": 186,
-          "text_preview": ")\nPayments for dividends and dividend equivalents\n(\n15,421\n)\n(\n15,234\n)\n(\n15,025\n)\nRepurchases of common stock\n(\n90,711\n)\n(\n94,949\n)\n(\n77,550\n)\nProcee..."
-        },
-        {
-          "company": "apple",
           "chunk_index": 178,
           "text_preview": "185,233\n189,282\nServices\n26,844\n25,119\n24,855\nTotal cost of sales\n220,960\n210,352\n214,137\nGross margin\n195,201\n180,683\n169,148\nOperating expenses:\nRes..."
         },
         {
           "company": "apple",
-          "chunk_index": 184,
-          "text_preview": "$\n1.02\n$\n0.98\n$\n0.94\nSee accompanying Notes to Consolidated Financial Statements.\nApple Inc. | 2025 Form 10-K | 32\nApple Inc.\nCONSOLIDATED STATEMENTS ..."
+          "chunk_index": 243,
+          "text_preview": "(\n9,802\n)\n(\n4,341\n)\n(\n2,351\n)\n(\n854\n)\n(\n1,291\n)\n\u2014\n(\n18,639\n)\nGeneral and administrative\n\u2014\n\u2014\n\u2014\n\u2014\n\u2014\n(\n7,458\n)\n(\n7,458\n)\nOperating income/(loss)\n$\n67,656..."
         },
         {
           "company": "apple",
-          "chunk_index": 244,
-          "text_preview": ")\n\u2014\n(\n18,260\n)\nGeneral and administrative\n\u2014\n\u2014\n\u2014\n\u2014\n\u2014\n(\n6,672\n)\n(\n6,672\n)\nOperating income/(loss)\n$\n60,508\n$\n36,098\n$\n30,328\n$\n11,888\n$\n12,066\n$\n(\n36,58..."
-        },
-        {
-          "company": "apple",
-          "chunk_index": 177,
-          "text_preview": "33\nNotes to Consolidated Financial Statements\n34\nReports of Independent Registered Public Accounting Firm\n49\nAll financial statement schedules have be..."
-        },
-        {
-          "company": "apple",
-          "chunk_index": 183,
-          "text_preview": ")\n(\n3,993\n)\n(\n3,521\n)\nShare-based compensation\n13,246\n12,034\n11,138\nEnding balances\n93,568\n83,276\n73,812\nAccumulated deficit:\nBeginning balances\n(\n19,..."
+          "chunk_index": 182,
+          "text_preview": "shares issued and outstanding, respectively\n93,568\n83,276\nAccumulated deficit\n(\n14,264\n)\n(\n19,154\n)\nAccumulated other comprehensive loss\n(\n5,571\n)\n(\n7..."
         }
       ],
       "faithfulness": 5,
       "answer_relevance": 5,
-      "context_precision": 3,
-      "reasoning": "The answer accurately reflects the main revenue sources for Apple based on the provided financial data, directly addressing the question, but the retrieved source chunks contain a mix of relevant and irrelevant information.",
-      "overall": 4.33
+      "context_precision": 5,
+      "reasoning": "The answer accurately reflects the information from the source chunks, directly addresses the question, and all retrieved chunks are highly relevant to the question.",
+      "overall": 5.0
     },
     {
       "question": "What are Microsoft's key AI investments?",
       "company_filter": "microsoft",
-      "answer": "I am referring to Microsoft, a technology company. \n\nMicrosoft is investing significant resources in several key AI areas, including:\n\n1. Transforming the workplace to deliver new, modern, modular business applications, drive deeper insights, and improve how people communicate, collaborate, learn, work, and interact with one another.\n2. Building AI into many of their offerings, including their productivity services, and making AI available for customers to use in solutions they build.\n3. Developing complete, intelligent solutions for customers that empower people to be productive and collaborate, while safeguarding businesses and simplifying IT management.\n4. Investing in Azure AI offerings, including supercomputing power for AI at scale, a rapidly expanding portfolio of AI cloud services, and hardware, such as custom-built silicon and partnerships with chip manufacturers.\n5. Building the Azure AI Foundry, a unified platform for developers to design, customize, and manage AI applications and agents.\n\nThese investments are expected to drive growth and lead the industry in several distinct areas of technology over the long term.",
+      "answer": "I am referring to Microsoft. According to the provided context, Microsoft is investing in artificial intelligence (\"AI\") across the entire company and infusing generative AI capabilities into their consumer and commercial offerings.",
       "sources": [
         {
           "company": "microsoft",
-          "chunk_index": 9,
-          "text_preview": "PART\nI\nITEM 1. B\nUSINESS\nGENERAL\nMicrosoft is a technology company committed to making digital technology and artificial intelligence (\u201cAI\u201d) available..."
-        },
-        {
-          "company": "microsoft",
-          "chunk_index": 203,
-          "text_preview": "OVERVIEW\nMicrosoft is a technology company committed to making digital technology and artificial intelligence (\u201cAI\u201d) available broadly and doing so re..."
-        },
-        {
-          "company": "microsoft",
-          "chunk_index": 13,
-          "text_preview": "\u2022\nCreate\nmore personal computing to enable users to interact with technology in more intuitive, engaging, and dynamic ways.\nOur Future Opportunity\nWe ..."
+          "chunk_index": 82,
+          "text_preview": "\u2022\nWe are investing in artificial intelligence (\u201cAI\u201d) across the entire company and infusing generative AI capabilities into our consumer and commercia..."
         },
         {
           "company": "microsoft",
@@ -131,41 +81,26 @@
         },
         {
           "company": "microsoft",
-          "chunk_index": 206,
-          "text_preview": "Microsoft and OpenAI maintain a long-term strategic partnership originally established in 2019. Microsoft is a major investor in OpenAI, and the compa..."
+          "chunk_index": 203,
+          "text_preview": "OVERVIEW\nMicrosoft is a technology company committed to making digital technology and artificial intelligence (\u201cAI\u201d) available broadly and doing so re..."
         },
         {
           "company": "microsoft",
-          "chunk_index": 11,
-          "text_preview": "Digital transformation and adoption of AI continues to revolutionize more business workstreams for organizations in every sector across the globe. For..."
-        },
-        {
-          "company": "microsoft",
-          "chunk_index": 74,
-          "text_preview": "\u2022\nOther news and announcements that we may post from time to time that investors might find useful or interesting.\n\u2022\nOpportunities to sign up for emai..."
-        },
-        {
-          "company": "microsoft",
-          "chunk_index": 29,
-          "text_preview": "Azure AI offerings provide a competitive advantage as companies seek ways to optimize and scale their business with AI. We offer supercomputing power ..."
+          "chunk_index": 9,
+          "text_preview": "PART\nI\nITEM 1. B\nUSINESS\nGENERAL\nMicrosoft is a technology company committed to making digital technology and artificial intelligence (\u201cAI\u201d) available..."
         }
       ],
-      "faithfulness": 3,
+      "faithfulness": 5,
       "answer_relevance": 5,
-      "context_precision": 3,
-      "reasoning": "The answer is relevant to the question and addresses Microsoft's key AI investments, but some claims are vague or slightly unsupported by the source chunks, and the retrieved chunks contain some noise and irrelevant information.",
-      "overall": 3.67
+      "context_precision": 5,
+      "reasoning": "The answer accurately reflects the source chunks, directly addresses the question, and all retrieved chunks are highly relevant to the question.",
+      "overall": 5.0
     },
     {
       "question": "What risks does Tesla mention regarding autonomous driving?",
       "company_filter": "tesla",
-      "answer": "I am referring to Tesla, Inc. \n\nTesla mentions the following risks regarding autonomous driving:\n\n1. Product liability claims in the event their vehicles do not perform or are claimed to not perform as expected.\n2. Claims and regulatory scrutiny arising from or related to misuse or claimed failures or alleged misrepresentations of the technologies that they are pioneering.\n3. Unfavorable outcomes in proceedings related to autonomous driving, which may harm their business, prospects, financial condition, and operating results.\n4. Regulatory patchwork and complexity in the U.S. and internationally, which may delay, restrict, or hinder the design and capabilities, sale, marketing, registration, and operation of driver assistance features and future autonomous capability on customer vehicles.\n5. Potential restrictions on the marketing of advanced driver-assistance and autonomous vehicle systems, including licenses, permits, competition prohibitions, tariffs, and other transport services obligations in European countries.",
+      "answer": "I am referring to Tesla, Inc. \nTesla mentions the risk of product liability claims related to its vehicles not performing as expected, particularly in the context of autonomous driving systems. Additionally, the company faces regulatory scrutiny and potential claims arising from misuse or claimed failures of its autonomous driving technologies, such as Robotaxi and Full-Self Driving (Supervised).",
       "sources": [
-        {
-          "company": "tesla",
-          "chunk_index": 21,
-          "text_preview": "Currently, we offer in our customer vehicles certain advanced driver assistance systems. Although at present, same as in the past, the driver is respo..."
-        },
         {
           "company": "tesla",
           "chunk_index": 121,
@@ -173,50 +108,35 @@
         },
         {
           "company": "tesla",
-          "chunk_index": 101,
-          "text_preview": "14\nTable of Contents\nOur future growth and success are dependent upon demand for our electric vehicles and adoption of autonomous driving solutions.\nI..."
+          "chunk_index": 126,
+          "text_preview": "Tesla\u2019s products, business, results of operations, and statements and actions of Tesla and its management are subject to significant amounts of commen..."
         },
         {
           "company": "tesla",
-          "chunk_index": 89,
-          "text_preview": "units at scale. Moreover, we will have to establish and ramp production of our proprietary battery cells and packs at our new factories, and we additi..."
+          "chunk_index": 532,
+          "text_preview": "On August 4, 2025, a proposed class action was filed in the U.S. District Court Western District of Texas against Tesla, Inc., Elon Musk, and certain ..."
         },
         {
           "company": "tesla",
-          "chunk_index": 54,
-          "text_preview": "In the U.S., while NHTSA has updated certain FMVSS to account for autonomous vehicle design, other FMVSS and regulations do not currently account for ..."
-        },
-        {
-          "company": "tesla",
-          "chunk_index": 182,
-          "text_preview": "In particular, we offer in our customer vehicles in certain markets driver assistance features that today assist drivers with certain tedious and pote..."
-        },
-        {
-          "company": "tesla",
-          "chunk_index": 56,
-          "text_preview": "certain national and city laws within each ECE country may impose legal restrictions on the marketing of advanced driver-assistance and autonomous veh..."
-        },
-        {
-          "company": "tesla",
-          "chunk_index": 147,
-          "text_preview": "charges against us with the National Labor Relations Board, and they may do so in the future. Any unfavorable ultimate outcome for Tesla may have a ne..."
+          "chunk_index": 193,
+          "text_preview": "We are cooperating with certain government investigations as discussed in Note 13,\nCommitments and Contingencies\n, to the consolidated financial state..."
         }
       ],
       "faithfulness": 3,
       "answer_relevance": 5,
       "context_precision": 3,
-      "reasoning": "The answer is highly relevant to the question, but its faithfulness is moderately supported by the source chunks, and the context precision is also moderate due to some retrieved chunks being only partially relevant to the question about Tesla's risks regarding autonomous driving.",
+      "reasoning": "The answer is mostly faithful to the source chunks, but some claims (e.g., 'misuse or claimed failures') are not explicitly mentioned in the chunks, and while most chunks are relevant, some (e.g., the class action lawsuit) are not directly related to the question.",
       "overall": 3.67
     },
     {
       "question": "How does Amazon describe its AWS business?",
       "company_filter": "amazon",
-      "answer": "Amazon describes its AWS business as consisting of global sales of compute, storage, database, and other services for start-ups, enterprises, government agencies, and academic institutions.",
+      "answer": "Amazon describes its AWS business as including global sales of compute, storage, database, and other services. Revenue is allocated to services using stand-alone selling prices and is primarily recognized when the customer uses these services, based on the quantity of services rendered, such as compute or storage capacity delivered on-demand. Certain services, including compute and database, are also offered as a fixed quantity over a specified term, for which revenue is recognized ratably.",
       "sources": [
         {
           "company": "amazon",
-          "chunk_index": 234,
-          "text_preview": "Advertising services\n- We provide advertising services to sellers, vendors, publishers, authors, and others, through programs such as sponsored ads, d..."
+          "chunk_index": 361,
+          "text_preview": "AWS\nThe AWS segment consists of amounts earned from global sales of compute, storage, database, and other services for start-ups, enterprises, governm..."
         },
         {
           "company": "amazon",
@@ -225,55 +145,30 @@
         },
         {
           "company": "amazon",
-          "chunk_index": 364,
-          "text_preview": "(3)\nIncludes commissions and any related fulfillment and shipping fees, and other third-party seller services.\n(4)\nIncludes sales of advertising servi..."
+          "chunk_index": 224,
+          "text_preview": "We have organized our operations into\nthree\nsegments: North America, International, and AWS.\nSee \u201cNote\u00a010 \u2014 Segment Information.\u201d\nPrinciples of Consol..."
         },
         {
           "company": "amazon",
           "chunk_index": 9,
           "text_preview": "General\nWe seek to be Earth\u2019s most customer-centric company. We are guided by four principles: customer obsession rather than competitor focus, passio..."
-        },
-        {
-          "company": "amazon",
-          "chunk_index": 361,
-          "text_preview": "AWS\nThe AWS segment consists of amounts earned from global sales of compute, storage, database, and other services for start-ups, enterprises, governm..."
-        },
-        {
-          "company": "amazon",
-          "chunk_index": 170,
-          "text_preview": "Costs to operate our AWS segment are primarily classified as \u201cTechnology and infrastructure\u201d as we leverage a shared infrastructure that supports both..."
-        },
-        {
-          "company": "amazon",
-          "chunk_index": 171,
-          "text_preview": "Fulfillment costs primarily consist of those costs incurred in operating and staffing our North America and International fulfillment centers, physica..."
-        },
-        {
-          "company": "amazon",
-          "chunk_index": 224,
-          "text_preview": "We have organized our operations into\nthree\nsegments: North America, International, and AWS.\nSee \u201cNote\u00a010 \u2014 Segment Information.\u201d\nPrinciples of Consol..."
         }
       ],
       "faithfulness": 5,
       "answer_relevance": 5,
-      "context_precision": 3,
-      "reasoning": "The answer is fully supported by the source chunks, directly addresses the question, but the retrieved chunks include some irrelevant information, such as advertising services and fulfillment costs.",
-      "overall": 4.33
+      "context_precision": 5,
+      "reasoning": "The answer accurately reflects the source chunks, directly addresses the question, and all retrieved chunks are highly relevant to the question.",
+      "overall": 5.0
     },
     {
       "question": "Which companies mention AI as a growth opportunity?",
       "company_filter": null,
-      "answer": "Based on the provided context, the following companies mention AI as a growth opportunity:\n\n1. Our Company (referring to the company whose 10-K filing is being analyzed, but the name is not explicitly mentioned) - They are investing in AI across the entire company and expect significant growth through AI initiatives.\n2. Microsoft Corporation - They are focused on leading the AI platform wave across their solution areas and investing significant resources in AI-related projects.\n3. Alibaba Group - They are a large cloud services company with internal teams designing hardware and software that incorporate accelerated or AI computing functionality.\n4. Alphabet Inc. - They are a large cloud services company with internal teams designing hardware and software that incorporate accelerated or AI computing functionality.\n5. Amazon, Inc. - They are a large cloud services company with internal teams designing hardware and software that incorporate accelerated or AI computing functionality.\n6. Baidu, Inc. - They are a large cloud services company with internal teams designing hardware and software that incorporate accelerated or AI computing functionality.\n7. Huawei - They are a supplier of Arm-based CPUs and companies that incorporate hardware and software for CPUs as part of their internal solutions or platforms.\n8. Tesla, Inc. - They are a company with internal teams designing SoC products for their own products and services.\n\nNote that the list may not be exhaustive, as the provided context only mentions a few examples of companies that mention AI as a growth opportunity.",
+      "answer": "Based on the provided context, I am referring to the company that is investing in artificial intelligence (\"AI\") across the entire company and infusing generative AI capabilities into their consumer and commercial offerings. \n\nThe company is not explicitly mentioned by name in the provided context, but based on the information about capital expenditures exceeding $20 billion in 2026, driven by AI initiatives, it appears to be a company in the technology or automotive sector, possibly a company like Tesla, given the mention of AI-enabled assets and a retail, service, and charging footprint.",
       "sources": [
         {
           "company": "microsoft",
           "chunk_index": 82,
           "text_preview": "\u2022\nWe are investing in artificial intelligence (\u201cAI\u201d) across the entire company and infusing generative AI capabilities into our consumer and commercia..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 23,
-          "text_preview": "Enterprises and startups across a broad range of industries use our accelerated computing platforms to build new generative and agentic AI-enabled pro..."
         },
         {
           "company": "tesla",
@@ -282,56 +177,26 @@
         },
         {
           "company": "nvidia",
-          "chunk_index": 277,
-          "text_preview": "While currently our supply chain is mainly concentrated in Asia, we are expanding into the U.S. and Latin America. These moves are expected to strengt..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 41,
-          "text_preview": "Our AI technology leadership is reinforced by our large and expanding ecosystem. Our computing platforms are available from virtually every major serv..."
+          "chunk_index": 23,
+          "text_preview": "Enterprises and startups across a broad range of industries use our accelerated computing platforms to build new generative and agentic AI-enabled pro..."
         },
         {
           "company": "tesla",
-          "chunk_index": 109,
-          "text_preview": "We currently are developing Bots, including Optimus, and intend for these products, as well as accompanying services, to be an important part of our b..."
-        },
-        {
-          "company": "microsoft",
-          "chunk_index": 13,
-          "text_preview": "\u2022\nCreate\nmore personal computing to enable users to interact with technology in more intuitive, engaging, and dynamic ways.\nOur Future Opportunity\nWe ..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 59,
-          "text_preview": "\u2022\nlarge cloud services companies with internal teams designing hardware and software that incorporate accelerated or AI computing functionality as par..."
+          "chunk_index": 295,
+          "text_preview": "41\nAs discussed in and subject to the considerations referenced in Part II, Item 7,\nManagement's Discussion and Analysis of Financial Condition and Re..."
         }
       ],
-      "faithfulness": 1,
-      "answer_relevance": 5,
-      "context_precision": 3,
-      "reasoning": "The answer is highly relevant to the question but lacks faithfulness as most claims about specific companies are not supported by the provided source chunks, and context precision is moderate due to some relevant and some noise chunks.",
+      "faithfulness": 3,
+      "answer_relevance": 4,
+      "context_precision": 2,
+      "reasoning": "The answer is partially supported by the source chunks, but some claims are vague or slightly unsupported, and most chunks are not highly relevant to the question.",
       "overall": 3.0
     },
     {
       "question": "What do these companies say about competition?",
       "company_filter": null,
-      "answer": "According to the 2025 Form 10-K filing of Apple Inc., the company states that the markets for their products and services are highly competitive and are characterized by aggressive price competition, downward pressure on gross margins, continual improvement in product performance, and price sensitivity on the part of consumers and businesses. \n\nAdditionally, Apple Inc. mentions that some of their competitors have broad product lines, low-priced products, large installed bases of active devices, and large customer bases. These competitors have the resources, experience, or cost structures to provide products and services at little or no profit or even at a loss. \n\nThe company also expects an increasingly competitive environment in the future, with new market entrants and alliances among competitors emerging, which could lead to increased competition and potentially harm Apple's business, financial condition, and operating results.",
+      "answer": "I am referring to Apple Inc. based on the provided context from their 2025 Form 10-K.\n\nAccording to the context, Apple Inc. states that their target markets remain competitive, and competition may intensify with expanding and changing product and service offerings, industry standards, customer and market needs, new entrants and consolidations. They also mention that their competitors' products, services, and technologies may be cheaper or provide better functionality or features than theirs, which has resulted and may in the future result in lower-than-expected selling prices or demand for their products.",
       "sources": [
-        {
-          "company": "apple",
-          "chunk_index": 21,
-          "text_preview": "Some of the Company\u2019s competitors have broad product lines, low-priced products, large installed bases of active devices, and large customer bases. Co..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 57,
-          "text_preview": "8\nTable of Contents\ndemand and whether we are able to deliver consistent volumes of our products at acceptable levels of quality and at competitive pr..."
-        },
-        {
-          "company": "nvidia",
-          "chunk_index": 97,
-          "text_preview": "Our target markets remain competitive, and competition may intensify with expanding and changing product and service offerings, industry standards, cu..."
-        },
         {
           "company": "apple",
           "chunk_index": 18,
@@ -339,36 +204,31 @@
         },
         {
           "company": "nvidia",
-          "chunk_index": 58,
-          "text_preview": "A significant source of competition comes from companies that provide or intend to provide GPUs, CPUs, DPUs, embedded SoCs, and other accelerated, AI ..."
-        },
-        {
-          "company": "amazon",
-          "chunk_index": 16,
-          "text_preview": "businesses. They may secure better terms from suppliers, adopt more aggressive pricing, pursue restrictive distribution agreements that restrict our a..."
-        },
-        {
-          "company": "apple",
-          "chunk_index": 55,
-          "text_preview": "intense as competitors have aggressively cut prices and lowered product margins. Certain competitors have the resources, experience or cost structures..."
+          "chunk_index": 97,
+          "text_preview": "Our target markets remain competitive, and competition may intensify with expanding and changing product and service offerings, industry standards, cu..."
         },
         {
           "company": "tesla",
-          "chunk_index": 107,
-          "text_preview": "significantly more or better-established resources than we do to devote to the design, development, manufacturing, distribution, promotion, sale and s..."
+          "chunk_index": 8,
+          "text_preview": "The discussions in this Annual Report on Form 10-K contain forward-looking statements within the meaning of the Private Securities Litigation Reform A..."
+        },
+        {
+          "company": "apple",
+          "chunk_index": 9,
+          "text_preview": "This Annual Report on Form 10-K (\u201cForm 10-K\u201d) contains forward-looking statements, within the meaning of the Private Securities Litigation Reform Act ..."
         }
       ],
-      "faithfulness": 5,
+      "faithfulness": 3,
       "answer_relevance": 5,
-      "context_precision": 3,
-      "reasoning": "The answer is highly faithful and relevant to the question, but the context precision is partial because while some source chunks are directly relevant to the question about competition, others seem to be only tangentially related or incomplete.",
+      "context_precision": 5,
+      "reasoning": "The answer is mostly faithful to the source chunks, directly and completely addresses the question, and all retrieved chunks are highly relevant to the question, but some claims in the answer are slightly unsupported or vague.",
       "overall": 4.33
     }
   ],
   "summary": {
-    "avg_faithfulness": 3.57,
-    "avg_relevance": 5.0,
-    "avg_precision": 3.14,
-    "avg_overall": 3.9
+    "avg_faithfulness": 4.0,
+    "avg_relevance": 4.86,
+    "avg_precision": 4.0,
+    "avg_overall": 4.29
   }
 }

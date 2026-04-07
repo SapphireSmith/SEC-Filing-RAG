@@ -1,7 +1,8 @@
 import os
+import time
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from groq import Groq
+from groq import Groq, APIStatusError, InternalServerError, RateLimitError
 from dotenv import load_dotenv
 import warnings
 from langchain_core._api.deprecation import LangChainDeprecationWarning
@@ -18,6 +19,8 @@ EMBEDDING_MODEL = "BAAI/bge-large-en-v1.5" if USE_LARGE_MODEL else "all-MiniLM-L
 
 # How many chunks to retrieve per query
 TOP_K = 8
+MAX_RETRIES = int(os.getenv("GROQ_MAX_RETRIES", "5"))
+BASE_RETRY_DELAY = int(os.getenv("GROQ_BASE_RETRY_DELAY", "15"))
 
 
 def load_vectorstore() -> Chroma:
@@ -37,12 +40,55 @@ def load_vectorstore() -> Chroma:
     return vectorstore
 
 
+def _sleep_for_retry(attempt: int, error: Exception) -> None:
+    """
+    Sleep with exponential backoff when Groq asks us to slow down.
+    """
+    retry_after = None
+    response = getattr(error, "response", None)
+
+    if response is not None:
+        headers = getattr(response, "headers", None) or {}
+        retry_after = headers.get("retry-after") or headers.get("Retry-After")
+
+    try:
+        delay = int(float(retry_after)) if retry_after else BASE_RETRY_DELAY * attempt
+    except (TypeError, ValueError):
+        delay = BASE_RETRY_DELAY * attempt
+
+    print(f"  Groq limit hit. Waiting {delay}s before retry {attempt}/{MAX_RETRIES}...")
+    time.sleep(delay)
+
+
+def _create_chat_completion(messages: list, model: str, temperature: float) -> str:
+    """
+    Wrap Groq calls with retries for rate limits and transient API errors.
+    """
+    client = Groq(api_key=GROQ_API_KEY)
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+            )
+            return response.choices[0].message.content.strip()
+        except (RateLimitError, InternalServerError) as error:
+            if attempt == MAX_RETRIES:
+                raise
+            _sleep_for_retry(attempt, error)
+        except APIStatusError as error:
+            if error.status_code not in {429, 500, 502, 503, 504} or attempt == MAX_RETRIES:
+                raise
+            _sleep_for_retry(attempt, error)
+
+
 def rewrite_query(query: str) -> str:
     """
     Rewrite query to be more specific for better retrieval.
     """
-    client = Groq(api_key=GROQ_API_KEY)
-    response = client.chat.completions.create(
+    return _create_chat_completion(
         model="llama-3.1-8b-instant",
         messages=[
             {
@@ -57,7 +103,6 @@ Rewritten question:""",
         ],
         temperature=0.0,
     )
-    return response.choices[0].message.content.strip()
 
 
 def retrieve_chunks(
@@ -90,9 +135,8 @@ def rerank_chunks(query: str, chunks: list, top_n: int = 4) -> list:
     for i, chunk in enumerate(chunks):
         chunks_text += f"\n[{i}] {chunk.page_content[:300]}\n"
 
-    client = Groq(api_key=GROQ_API_KEY)
-    response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+    raw = _create_chat_completion(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[
             {
                 "role": "user",
@@ -112,8 +156,6 @@ Return ONLY the JSON array, nothing else.""",
         ],
         temperature=0.0,
     )
-
-    raw = response.choices[0].message.content.strip()
 
     try:
         # Parse the ranked indices
@@ -178,14 +220,11 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
     prompt = build_prompt(query, chunks)
 
     # Step 6: Call Groq API
-    client = Groq(api_key=GROQ_API_KEY)
-    response = client.chat.completions.create(
+    answer = _create_chat_completion(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.1,
     )
-
-    answer = response.choices[0].message.content
 
     # Step 7: Format sources
     sources = [
