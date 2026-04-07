@@ -37,6 +37,29 @@ def load_vectorstore() -> Chroma:
     return vectorstore
 
 
+def rewrite_query(query: str) -> str:
+    """
+    Rewrite query to be more specific for better retrieval.
+    """
+    client = Groq(api_key=GROQ_API_KEY)
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""Rewrite this question to be more specific for searching SEC 10-K filings.
+Focus on key financial terms and concepts.
+Return ONLY the rewritten question, nothing else.
+
+Original question: {query}
+Rewritten question:""",
+            }
+        ],
+        temperature=0.0,
+    )
+    return response.choices[0].message.content.strip()
+
+
 def retrieve_chunks(
     vectorstore: Chroma, query: str, company_filter: str = None
 ) -> list:
@@ -45,15 +68,65 @@ def retrieve_chunks(
     Optionally filter by company.
     """
     if company_filter:
-        # Search only within a specific company
         results = vectorstore.similarity_search(
             query, k=TOP_K, filter={"company": company_filter}
         )
     else:
-        # Search across all companies
         results = vectorstore.similarity_search(query, k=TOP_K)
 
     return results
+
+
+def rerank_chunks(query: str, chunks: list, top_n: int = 4) -> list:
+    """
+    Use LLM to rerank chunks by relevance to the query.
+    Returns top_n most relevant chunks.
+    """
+    if len(chunks) <= top_n:
+        return chunks
+
+    # Build a numbered list of chunks for the LLM to rank
+    chunks_text = ""
+    for i, chunk in enumerate(chunks):
+        chunks_text += f"\n[{i}] {chunk.page_content[:300]}\n"
+
+    client = Groq(api_key=GROQ_API_KEY)
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""You are a relevance ranking system for SEC 10-K filings.
+
+Given a question and a list of text chunks, rank the chunks by how relevant they are to answering the question.
+
+Question: {query}
+
+Chunks:
+{chunks_text}
+
+Return ONLY a JSON array of the chunk indices in order from most to least relevant.
+Example: [3, 0, 5, 2, 1, 4, 6, 7]
+Return ONLY the JSON array, nothing else.""",
+            }
+        ],
+        temperature=0.0,
+    )
+
+    raw = response.choices[0].message.content.strip()
+
+    try:
+        # Parse the ranked indices
+        import json
+
+        ranked_indices = json.loads(raw)
+        # Return top_n chunks in ranked order
+        reranked = [chunks[i] for i in ranked_indices[:top_n] if i < len(chunks)]
+        print(f"  Reranked chunks: {ranked_indices[:top_n]}")
+        return reranked
+    except Exception as e:
+        print(f"  Reranking failed: {e} — using original order")
+        return chunks[:top_n]
 
 
 def build_prompt(query: str, chunks: list) -> str:
@@ -61,7 +134,6 @@ def build_prompt(query: str, chunks: list) -> str:
     Build the prompt we send to Groq.
     Combines retrieved chunks + user question.
     """
-    # Join all chunk texts into one context block
     context = "\n\n---\n\n".join([chunk.page_content for chunk in chunks])
 
     prompt = f"""You are a financial analyst assistant. 
@@ -92,23 +164,30 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
     if vectorstore is None:
         vectorstore = load_vectorstore()
 
-    # Step 2: Find relevant chunks
-    chunks = retrieve_chunks(vectorstore, query, company_filter)
+    # Step 2: Rewrite query for better retrieval
+    rewritten_query = rewrite_query(query)
+    print(f"  Rewritten query: {rewritten_query}")
 
-    # Step 3: Build prompt
+    # Step 3: Find relevant chunks using rewritten query
+    chunks = retrieve_chunks(vectorstore, rewritten_query, company_filter)
+
+    # Step 4: Rerank chunks by relevance
+    chunks = rerank_chunks(query, chunks, top_n=4)
+
+    # Step 5: Build prompt using original query
     prompt = build_prompt(query, chunks)
 
-    # Step 4: Call Groq API
+    # Step 6: Call Groq API
     client = Groq(api_key=GROQ_API_KEY)
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,  # low temperature = more factual, less creative
+        temperature=0.1,
     )
 
     answer = response.choices[0].message.content
 
-    # Step 5: Format sources
+    # Step 7: Format sources
     sources = [
         {
             "company": chunk.metadata.get("company"),
@@ -124,7 +203,6 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
 if __name__ == "__main__":
     print("=== Testing Retriever ===\n")
 
-    # Test question
     # result = get_answer("What export control risks does NVIDIA face?")
     # result = get_answer("Which companies mention AI as a growth opportunity?")
     result = get_answer(
@@ -133,7 +211,7 @@ if __name__ == "__main__":
 
     print(f"Question: {result['question']}")
     print(f"\nAnswer:\n{result['answer']}")
-    print(f"\nSources used:")  # noqa: F541
+    print(f"\nSources used:")
     for s in result["sources"]:
         print(f"  - {s['company']} | chunk {s['chunk_index']}")
         print(f"    Preview: {s['text_preview']}")
