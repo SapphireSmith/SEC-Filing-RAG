@@ -87,6 +87,40 @@ def _create_chat_completion(messages: list, model: str, temperature: float) -> s
             _sleep_for_retry(attempt, error)
 
 
+def _stream_chat_completion(messages: list, model: str, temperature: float):
+    """
+    Stream a Groq completion token-by-token with the same retry logic used by
+    normal completions.
+    """
+    client = Groq(api_key=GROQ_API_KEY)
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            stream = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                stream=True,
+            )
+
+            for chunk in stream:
+                delta = chunk.choices[0].delta.content or ""
+                if delta:
+                    yield delta
+            return
+        except (RateLimitError, InternalServerError) as error:
+            if attempt == MAX_RETRIES:
+                raise
+            _sleep_for_retry(attempt, error)
+        except APIStatusError as error:
+            if (
+                error.status_code not in {429, 500, 502, 503, 504}
+                or attempt == MAX_RETRIES
+            ):
+                raise
+            _sleep_for_retry(attempt, error)
+
+
 def rewrite_query(query: str) -> str:
     """
     Rewrite query to be more specific for better retrieval.
@@ -240,6 +274,40 @@ def get_answer(query: str, company_filter: str = None, vectorstore=None) -> dict
     ]
 
     return {"question": query, "answer": answer, "sources": sources}
+
+
+def get_answer_stream(query: str, company_filter: str = None, vectorstore=None):
+    """
+    Run the same RAG pipeline as get_answer(), but stream the final answer text
+    as it is generated.
+    """
+    if vectorstore is None:
+        vectorstore = load_vectorstore()
+
+    rewritten_query = rewrite_query(query)
+    print(f"  Rewritten query: {rewritten_query}")
+
+    chunks = retrieve_chunks(vectorstore, rewritten_query, company_filter)
+    chunks = rerank_chunks(query, chunks, top_n=4)
+    prompt = build_prompt(query, chunks)
+
+    sources = [
+        {
+            "company": chunk.metadata.get("company"),
+            "chunk_index": chunk.metadata.get("chunk_index"),
+            "text_preview": chunk.page_content[:150] + "...",
+        }
+        for chunk in chunks
+    ]
+
+    answer = ""
+    for token in _stream_chat_completion(
+        model="llama-3.1-8b-instant",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.1,
+    ):
+        answer += token
+        yield {"question": query, "answer": answer, "sources": sources}
 
 
 if __name__ == "__main__":

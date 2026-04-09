@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from functools import partial
 
 import gradio as gr
 import pandas as pd
@@ -479,7 +480,7 @@ if not os.path.exists(CHROMA_DIR):
 else:
     print("ChromaDB found. Skipping ingestion.")
 
-from rag.retriever import get_answer, load_vectorstore  # noqa: E402
+from rag.retriever import get_answer, get_answer_stream, load_vectorstore  # noqa: E402
 
 print("Loading vector store...")
 vectorstore = load_vectorstore()
@@ -520,9 +521,29 @@ def ask_question(question: str, company: str) -> tuple[str, str]:
         return f"### Answer\n\nError: {str(error)}", DEFAULT_SOURCES
 
 
-def run_quick_question(question: str, company: str) -> tuple[str, str, str, str]:
-    answer, sources = ask_question(question, company)
-    return question, company, answer, sources
+def ask_question_stream(question: str, company: str):
+    question = question.strip()
+    if not question:
+        yield "### Answer\n\nPlease enter a question.", DEFAULT_SOURCES
+        return
+
+    company_filter = None if company == "All Companies" else company
+
+    try:
+        sources_markdown = DEFAULT_SOURCES
+        for i, result in enumerate(
+            get_answer_stream(question, company_filter, vectorstore), start=1
+        ):
+            if i == 1:
+                sources_markdown = format_sources(result["sources"])
+            yield f"### Answer\n\n{result['answer']}", sources_markdown
+    except Exception as error:
+        yield f"### Answer\n\nError: {str(error)}", DEFAULT_SOURCES
+
+
+def run_quick_question_stream(question: str, company: str):
+    for answer, sources in ask_question_stream(question, company):
+        yield question, company, answer, sources
 
 
 def load_eval_results() -> tuple[pd.DataFrame, str]:
@@ -641,14 +662,14 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base(), title="SEC Filing RAG") as app:
                 )
 
     submit_btn.click(
-        fn=ask_question,
+        fn=ask_question_stream,
         inputs=[question_input, company_input],
         outputs=[answer_output, sources_output],
         show_progress="full",
     )
 
     question_input.submit(
-        fn=ask_question,
+        fn=ask_question_stream,
         inputs=[question_input, company_input],
         outputs=[answer_output, sources_output],
         show_progress="full",
@@ -656,7 +677,7 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base(), title="SEC Filing RAG") as app:
 
     for button, item in zip(quick_buttons, QUICK_QUESTIONS):
         button.click(
-            fn=lambda q=item["question"], c=item["company"]: run_quick_question(q, c),
+            fn=partial(run_quick_question_stream, item["question"], item["company"]),
             inputs=[],
             outputs=[question_input, company_input, answer_output, sources_output],
             show_progress="full",
