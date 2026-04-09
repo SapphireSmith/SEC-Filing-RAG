@@ -79,7 +79,10 @@ def _create_chat_completion(messages: list, model: str, temperature: float) -> s
                 raise
             _sleep_for_retry(attempt, error)
         except APIStatusError as error:
-            if error.status_code not in {429, 500, 502, 503, 504} or attempt == MAX_RETRIES:
+            if (
+                error.status_code not in {429, 500, 502, 503, 504}
+                or attempt == MAX_RETRIES
+            ):
                 raise
             _sleep_for_retry(attempt, error)
 
@@ -250,7 +253,7 @@ if __name__ == "__main__":
 
     print(f"Question: {result['question']}")
     print(f"\nAnswer:\n{result['answer']}")
-    print(f"\nSources used:")
+    print(f"\nSources used:")  # noqa: F541
     for s in result["sources"]:
         print(f"  - {s['company']} | chunk {s['chunk_index']}")
         print(f"    Preview: {s['text_preview']}")
