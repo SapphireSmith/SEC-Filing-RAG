@@ -582,12 +582,16 @@ def load_eval_results() -> tuple[pd.DataFrame, str]:
 | Context Precision | {summary["avg_precision"]} / 5 |
 | **Overall** | **{summary["avg_overall"]} / 5** |
 
-Loaded from `eval_results.json` on disk. No new Groq evaluation calls were made.
+Loaded from `eval_results.json` on disk. No new Groq evaluation calls were made.\n
+Model used for evaluation `llama-3.1-8b-instant`.
 """
         return dataframe, summary_md
 
     except FileNotFoundError:
-        return pd.DataFrame(), "No evaluation results found. Run `python .\\rag\\evaluator.py` first."
+        return (
+            pd.DataFrame(),
+            "No evaluation results found. Run `python .\\rag\\evaluator.py` first.",
+        )
     except Exception as error:
         return pd.DataFrame(), f"Error loading saved evaluation results: {str(error)}"
 
