@@ -19,7 +19,7 @@ The project includes:
 - a ChromaDB vector store built from downloaded 10-K text
 - Groq-powered query rewriting, reranking, and answer generation
 - an LLM-as-judge evaluation pipeline with a saved dashboard view
-- Hugging Face Spaces compatibility out of the box
+- Hugging Face Spaces compatibility out of the box 
 
 ## What This App Does
 
